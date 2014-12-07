@@ -7,8 +7,8 @@ A large edit of Mach1.py
 Separates the usage of the zaber stage into its own class
 
 __dependencies__
-	python 2.7
-	pyserial
+	python 		- version 2.7
+	pyserial	- version 2.7
 """
 
 from __future__ import division
@@ -17,6 +17,9 @@ import serial, struct, time, glob, sys
 
 class Zaber():
 	# static variables
+	# view the zaber command descriptions here and possible add your own
+	#     definitions to this class!
+	#     http://www.zaber.com/wiki/T-Series/Compilation/All_Commands
 	cmd = {
 	"home": 1, 
 	"moveAbsolute": 20, 
@@ -51,9 +54,9 @@ class Zaber():
 	def zaberSend(self, device, command, data=0):
 		"""
 		Generally not used by user.
-			used by all zaber functions to send commands to the zaber stage.
-			send a packet using the specified device number, command number, and data
-			The data argument is optional and defaults to zero (really shouldn't be optional though, you kind of need it)
+			- used by all zaber functions to send commands to the zaber stage.
+			- send a packet using the specified device number, command number, and data
+			- The data argument is optional and defaults to zero (really shouldn't be optional though, you kind of need it)
 		device - "hor" or "ver"
 		"""
 		packet = struct.pack('<BBl', self.translation[device], command, data)
@@ -109,7 +112,7 @@ class Zaber():
 		data 	- a distance in mm.
 		"""
 		dist = self.convertDistance(data)
-		r = self.zaberSend(stage, command, dist)
+		r = self.zaberSend(stage, self.cmd[command], dist)
 		return r
 		
 	def setSpeed(self, v):

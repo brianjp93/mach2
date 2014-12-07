@@ -3,10 +3,21 @@ tds.py
 Brian Perrett
 12/07/14
 Used largely as a wrapper for the pytek library to control the tds2014 oscilloscope
+
+-Uses Brian Mearns, Pytek class.
+
+-pytek was made for the tds 3000 series, but the 2000 and 3000 series' commands
+	are largely the same.
+
+	__Differences__
+		-Points/Waveform
+			- 3000 series holds 10,000 points per waveform.
+			- 2000 series holds 2,500 points per waveform.
+
 __dependencies__
-	python 2.7
-	pyserial
-	pytek
+	python 		- version 2.7
+	pyserial	- version 2.7
+	pytek 		- version 1.1.1.0-r5
 """
 
 from __future__ import division
@@ -37,7 +48,7 @@ class Tds():
 		#     Take many samples at once, receive data all at once.
 		while True:
 			try:		
-				waveform = self.osc.get_waveform(source = ch, start = 0, stop = 0)
+				waveform = self.osc.get_waveform(source = ch, double=False, start = 1, stop = 1)
 				break
 			except:
 				print("Retry: " + str(counter))
@@ -57,7 +68,7 @@ class Tds():
 		counter = 1
 		while True:
 			try:		
-				waveform = self.osc.get_waveform(source = ch, start = 1, stop = samples)
+				waveform = self.osc.get_waveform(source = ch, double=False, start = 1, stop = samples)
 				break
 			except:
 				print("Retry: " + str(counter))
@@ -76,7 +87,7 @@ class Tds():
 		counter = 1
 		while True:
 			try:		
-				waveform = self.osc.get_waveform(source = ch, start = 1, stop = samples)
+				waveform = self.osc.get_waveform(source = ch, double=False, start = 1, stop = samples)
 				break
 			except:
 				print("Retry: " + str(counter))

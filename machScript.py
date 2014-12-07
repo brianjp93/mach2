@@ -38,7 +38,7 @@ v2 = []  # voltage ch2
 # dev.zaberStoreLocation(dev.translation["hor"], 14)
 # dev.zaberStoreLocation(dev.translation["ver"], 15)
 
-# x_loc will be used globally.
+# global variables
 x_loc = 0
 _cal1 = 0
 _cal2 = 0
@@ -70,7 +70,7 @@ def snake(dx, zaber, tds):
 
 	#  move horizontal
 	print("Moving horizontal " + str(dx) + "mm.")
-	print zaber.move("hor", command = zaber.cmd["moveRelative"], data = dx)
+	print zaber.move("hor", command="moveRelative", data=dx)
 	# time.sleep(10)
 	x_loc += dx
 
@@ -85,7 +85,7 @@ def snake(dx, zaber, tds):
 
 	#  move horizontal
 	print("moving horizontal " + str(dx) + "mm.")
-	print zaber.move("hor", command = zaber.cmd["moveRelative"], data = dx)
+	print zaber.move("hor", command="moveRelative", data=dx)
 	x_loc += dx
 
 	return x_array, y_array, v1, v2
@@ -112,7 +112,7 @@ def move_up():
 	tds.trigger()
 
 	print("Start upward scan.")
-	zaber.move("ver", command = zaber.cmd["moveRelative"], data=opticDiameter + 20)
+	zaber.move("ver", command="moveRelative", data=opticDiameter + 20)
 
 	print("creating v1, v2 lists.")
 	v1 = tds.getWaveform(ch="CH1")
@@ -147,7 +147,7 @@ def move_down():
 	tds.trigger()
 
 	print("Start downward scan.")
-	zaber.move("ver", command = zaber.cmd["moveRelative"], data=-opticDiameter - 20)
+	zaber.move("ver", command="moveRelative", data=-opticDiameter - 20)
 
 	print("creating v1, v2 lists.")
 	v1 = tds.getWaveform(ch="CH1")
@@ -205,12 +205,12 @@ def calibrateUp():
 	"""
 	global tds, zaber
 	tds.setSecDiv("1")
-	print(zaber.move("ver", command = zaber.cmd["moveRelative"], data = 20))
+	print(zaber.move("ver", command="moveRelative", data = 20))
 	time.sleep(5)
 	tds.trigger()
 	_cal1 = tds.getAvgOfSamples(ch="CH1", samples=2500)
 	_cal2 = tds.getAvgOfSamples(ch="CH2", samples=2500)
-	print(zaber.move("ver", command = zaber.cmd["moveRelative"], data = -20))
+	print(zaber.move("ver", command="moveRelative", data = -20))
 	time.sleep(5)
 	tds.setSecDiv("2")
 	return _cal1, _cal2
@@ -223,12 +223,12 @@ def calibrateDown():
 	"""
 	global tds, zaber
 	tds.setSecDiv("1")
-	print(zaber.move("ver", command = zaber.cmd["moveRelative"], data = -20))
+	print(zaber.move("ver", command="moveRelative", data = -20))
 	time.sleep(5)
 	tds.trigger()
 	_cal1 = tds.getAvgOfSamples(ch="CH1", samples=2500)
 	_cal2 = tds.getAvgOfSamples(ch="CH2", samples=2500)
-	print(zaber.move("ver", command = zaber.cmd["moveRelative"], data = 20))
+	print(zaber.move("ver", command="moveRelative", data = 20))
 	time.sleep(5)
 	tds.setSecDiv("2")
 	return _cal1, _cal2
