@@ -43,7 +43,7 @@ x_loc = 0
 _cal1 = 0
 _cal2 = 0
 
-def snake(dx, dev):
+def snake(dx, zaber, tds):
 	"""
 	does a single vertical scan, moves over dx, does another vertical scan, ends at new position
 	returns x, y, v1, v2 for first scan and then reversed x_2, y_2, v1_2, v2_2 of second scan
@@ -144,7 +144,7 @@ def move_down():
 		cal1, cal2 = calibrateHere()
 
 	print("Setting up oscilloscope to RUN, SEQ, trigger.")
-	dev.trigger()
+	tds.trigger()
 
 	print("Start downward scan.")
 	zaber.move("ver", command = zaber.cmd["moveRelative"], data=-opticDiameter - 20)
@@ -207,7 +207,7 @@ def calibrateUp():
 	tds.setSecDiv("1")
 	print(zaber.move("ver", command = zaber.cmd["moveRelative"], data = 20))
 	time.sleep(5)
-	dev.trigger()
+	tds.trigger()
 	_cal1 = tds.getAvgOfSamples(ch="CH1", samples=2500)
 	_cal2 = tds.getAvgOfSamples(ch="CH2", samples=2500)
 	print(zaber.move("ver", command = zaber.cmd["moveRelative"], data = -20))
@@ -240,7 +240,7 @@ if __name__ == "__main__":
 
 	while traversed <= opticDiameter:
 		print("Beginning snake function")
-		temp_x, temp_y, temp_v1, temp_v2 = snake(dx, dev)
+		temp_x, temp_y, temp_v1, temp_v2 = snake(dx, zaber, tds)
 		traversed += 2 * dx
 		print("snake finished.")
 		print("Appending master lists")
