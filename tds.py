@@ -3,6 +3,10 @@ tds.py
 Brian Perrett
 12/07/14
 Used largely as a wrapper for the pytek library to control the tds2014 oscilloscope
+__dependencies__
+	python 2.7
+	pyserial
+	pytek
 """
 
 from __future__ import division

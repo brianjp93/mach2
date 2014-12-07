@@ -5,6 +5,10 @@ Brian Perrett
 
 A large edit of Mach1.py
 Separates the usage of the zaber stage into its own class
+
+__dependencies__
+	python 2.7
+	pyserial
 """
 
 from __future__ import division
