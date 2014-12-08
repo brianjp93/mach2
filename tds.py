@@ -65,7 +65,7 @@ class Tds():
 			ch		- which channel you want to take the measurement from.  Defaults to CH1
 			samples - Number of samples you would like to average
 		"""
-		self.isReady()
+		self.isSave()
 		counter = 1
 		while True:
 			try:		
@@ -84,7 +84,7 @@ class Tds():
 		"""
 		return list of floats  -  waveform value list
 		"""
-		self.isReady()
+		self.isSave()
 		counter = 1
 		while True:
 			try:		
@@ -124,15 +124,20 @@ class Tds():
 		valid = ["1", "2", "5", "10"]
 		self.osc.send_command("HOR:MAI:SCA", arg)
 
+	def makeReady(self):
+		"""
+		puts oscilloscope into ready state
+		"""
+		self.setAquireState("RUN")
+		# self.setStopAfter("SEQ")
+
 	def trigger(self):
 		"""
 		puts into ready, single sequence mode, then	forces a trigger.
 		"""
-		self.setAquireState("RUN")
-		self.setStopAfter("SEQ")
 		self.osc.trigger()
 
-	def isReady(self):
+	def isSave(self):
 		"""
 		waits for the oscilloscope to be done taking measurements before returning True.
 		
@@ -142,3 +147,27 @@ class Tds():
 		while self.osc.trigger_state() != "save":
 			time.sleep(.1)
 		return True
+
+	def isReady(self):
+		"""
+		waits for the oscilloscope to go 
+			into ready state before return True.
+		"""
+		while self.osc.trigger_state() != "ready":
+			time.sleep(.1)
+		return True
+
+	def isArmed(self):
+		"""
+		waits for the oscilloscope to go 
+			into armed state before return True.
+		"""
+		while self.osc.trigger_state() != "armed":
+			time.sleep(.1)
+		return True
+
+	def getState(self):
+		"""
+		return oscilloscope's current state.
+		"""
+		return self.osc.trigger_state()

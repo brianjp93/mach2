@@ -10,6 +10,8 @@ from __future__ import division
 from zaber import Zaber
 from tds import Tds
 import os.path
+import time
+import numpy as np
 
 # relevant variables
 print("setting variables")
@@ -39,9 +41,8 @@ v2 = []  # voltage ch2
 # dev.zaberStoreLocation(dev.translation["ver"], 15)
 
 # global variables
+global x_loc, _cal1, _cal2
 x_loc = 0
-_cal1 = 0
-_cal2 = 0
 
 def snake(dx, zaber, tds):
 	"""
@@ -109,10 +110,12 @@ def move_up():
 		cal1, cal2 = calibrateDown()
 
 	print("Setting up oscilloscope to RUN, SEQ, trigger.")
-	tds.trigger()
+	tds.makeReady()
+	tds.isReady()
 
 	print("Start upward scan.")
 	zaber.move("ver", command="moveRelative", data=opticDiameter + 20)
+	tds.trigger()
 
 	print("creating v1, v2 lists.")
 	v1 = tds.getWaveform(ch="CH1")
@@ -144,10 +147,13 @@ def move_down():
 		cal1, cal2 = calibrateHere()
 
 	print("Setting up oscilloscope to RUN, SEQ, trigger.")
-	tds.trigger()
+	tds.makeReady()
+	tds.isReady()
 
 	print("Start downward scan.")
+	time.sleep(5.64)
 	zaber.move("ver", command="moveRelative", data=-opticDiameter - 20)
+	tds.trigger()
 
 	print("creating v1, v2 lists.")
 	v1 = tds.getWaveform(ch="CH1")
@@ -191,7 +197,10 @@ def calibrateHere():
 	"""
 	global tds
 	tds.setSecDiv("1")
+
+	tds.makeReady()
 	tds.trigger()
+
 	_cal1 = tds.getAvgOfSamples(ch="CH1", samples=2500)
 	_cal2 = tds.getAvgOfSamples(ch="CH2", samples=2500)
 	tds.setSecDiv("2")
@@ -207,7 +216,10 @@ def calibrateUp():
 	tds.setSecDiv("1")
 	print(zaber.move("ver", command="moveRelative", data = 20))
 	time.sleep(5)
+
+	tds.makeReady()
 	tds.trigger()
+
 	_cal1 = tds.getAvgOfSamples(ch="CH1", samples=2500)
 	_cal2 = tds.getAvgOfSamples(ch="CH2", samples=2500)
 	print(zaber.move("ver", command="moveRelative", data = -20))
@@ -225,7 +237,10 @@ def calibrateDown():
 	tds.setSecDiv("1")
 	print(zaber.move("ver", command="moveRelative", data = -20))
 	time.sleep(5)
+
+	tds.makeReady()
 	tds.trigger()
+
 	_cal1 = tds.getAvgOfSamples(ch="CH1", samples=2500)
 	_cal2 = tds.getAvgOfSamples(ch="CH2", samples=2500)
 	print(zaber.move("ver", command="moveRelative", data = 20))
@@ -236,6 +251,8 @@ def calibrateDown():
 if __name__ == "__main__":
 	traversed = 0
 	num = getFileNumber()
+	global _cal1, _cal2
+
 	_cal1, _cal2 = calibrateDown()
 
 	while traversed <= opticDiameter:
