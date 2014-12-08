@@ -71,7 +71,7 @@ def snake(dx, zaber, tds):
 
 	#  move horizontal
 	print("Moving horizontal " + str(dx) + "mm.")
-	print zaber.move("hor", command="moveRelative", data=dx)
+	zaber.move("hor", command="moveRelative", data=dx)
 	# time.sleep(10)
 	x_loc += dx
 
@@ -86,7 +86,7 @@ def snake(dx, zaber, tds):
 
 	#  move horizontal
 	print("moving horizontal " + str(dx) + "mm.")
-	print zaber.move("hor", command="moveRelative", data=dx)
+	zaber.move("hor", command="moveRelative", data=dx)
 	x_loc += dx
 
 	return x_array, y_array, v1, v2
@@ -111,8 +111,6 @@ def move_up():
 
 	print("Setting up oscilloscope to RUN, SEQ, trigger.")
 	tds.makeReady()
-	tds.isReady()
-
 	print("Start upward scan.")
 	zaber.move("ver", command="moveRelative", data=opticDiameter + 20)
 	tds.trigger()
@@ -148,10 +146,9 @@ def move_down():
 
 	print("Setting up oscilloscope to RUN, SEQ, trigger.")
 	tds.makeReady()
-	tds.isReady()
 
 	print("Start downward scan.")
-	time.sleep(5.64)
+	time.sleep(6.3)
 	zaber.move("ver", command="moveRelative", data=-opticDiameter - 20)
 	tds.trigger()
 
@@ -214,7 +211,7 @@ def calibrateUp():
 	"""
 	global tds, zaber
 	tds.setSecDiv("1")
-	print(zaber.move("ver", command="moveRelative", data = 20))
+	zaber.move("ver", command="moveRelative", data = 20)
 	time.sleep(5)
 
 	tds.makeReady()
@@ -222,7 +219,7 @@ def calibrateUp():
 
 	_cal1 = tds.getAvgOfSamples(ch="CH1", samples=2500)
 	_cal2 = tds.getAvgOfSamples(ch="CH2", samples=2500)
-	print(zaber.move("ver", command="moveRelative", data = -20))
+	zaber.move("ver", command="moveRelative", data = -20)
 	time.sleep(5)
 	tds.setSecDiv("2")
 	return _cal1, _cal2
@@ -235,7 +232,7 @@ def calibrateDown():
 	"""
 	global tds, zaber
 	tds.setSecDiv("1")
-	print(zaber.move("ver", command="moveRelative", data = -20))
+	zaber.move("ver", command="moveRelative", data = -20)
 	time.sleep(5)
 
 	tds.makeReady()
@@ -243,7 +240,7 @@ def calibrateDown():
 
 	_cal1 = tds.getAvgOfSamples(ch="CH1", samples=2500)
 	_cal2 = tds.getAvgOfSamples(ch="CH2", samples=2500)
-	print(zaber.move("ver", command="moveRelative", data = 20))
+	zaber.move("ver", command="moveRelative", data = 20)
 	time.sleep(5)
 	tds.setSecDiv("2")
 	return _cal1, _cal2
