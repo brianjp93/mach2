@@ -60,6 +60,7 @@ class Tds():
 	def getAvgOfSamples(self, ch = "CH1", samples = 100):
 		"""
 		gets a continuous stream of <samples> samples, and then get their average and return a single value.
+		returns float  -  voltage
 		__Variables__
 			ch		- which channel you want to take the measurement from.  Defaults to CH1
 			samples - Number of samples you would like to average
@@ -81,7 +82,7 @@ class Tds():
 
 	def getWaveform(self, ch="CH1", samples=2500):
 		"""
-		return waveform value list
+		return list of floats  -  waveform value list
 		"""
 		self.isReady()
 		counter = 1

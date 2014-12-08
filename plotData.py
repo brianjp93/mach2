@@ -1,6 +1,6 @@
 """
 plotData.py
-reads x, y, v1, and v2 array files and creates contour plots from them
+reads x, y, v1, and v2 array files and creates plots from them
 """
 from __future__ import division
 import numpy as np
