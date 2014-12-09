@@ -1,1 +1,1 @@
-386.007000208
+Uncalibrated: 7/500 in 218.842000008 seconds.

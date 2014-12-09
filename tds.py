@@ -27,13 +27,13 @@ from pytek import TDS3k
 
 class Tds():
 
-	def __init__(self, oscPort = "COM1"):
+	def __init__(self, oscPort="COM1", timeout=1):
 		"""
 		initialize variables.
 		oscPort - Port for oscilloscope.  COM1 by default.  Could be COM2 or 3 as well.
 		"""
 		# 9600 = baudrate
-		self.osc = TDS3k(serial.Serial(oscPort, 9600, timeout=1))
+		self.osc = TDS3k(serial.Serial(oscPort, 9600, timeout=timeout))
 
 	def getSingleMeasurement(self, ch = "CH1"):
 		"""
@@ -57,7 +57,7 @@ class Tds():
 			voltage = y
 		return voltage
 
-	def getAvgOfSamples(self, ch = "CH1", samples = 100):
+	def getAvgOfSamples(self, ch = "CH1", samples = 500):
 		"""
 		gets a continuous stream of <samples> samples, and then get their average and return a single value.
 		returns float  -  voltage
@@ -94,7 +94,7 @@ class Tds():
 				print("Retry: " + str(counter))
 				counter += 1
 		y_array = []
-		for x,y in waveform:
+		for x, y in waveform:
 			y_array.append(y)
 		return y_array
 

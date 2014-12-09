@@ -1,9 +1,10 @@
 """
-machScript.py
+noCalMachScript.py
 Brian Perrett
 December 7, 2014
 
 Uses zaber.py and tds.py to take measurements on an optic.
+No calibration measurement version.  Slower.
 """
 
 from __future__ import division
@@ -42,7 +43,8 @@ v2 = []  # voltage ch2
 # dev.zaberStoreLocation(dev.translation["ver"], 15)
 
 # global variables
-global x_loc, _cal1, _cal2
+
+global x_loc
 x_loc = 0
 
 def snake(dx, zaber, tds):
@@ -99,14 +101,9 @@ def move_up():
 		Moves past the end by 
 	returns x array, y array, v array
 	"""
-	global opticDiameter, x_loc, _cal1, _cal2
+	global opticDiameter, x_loc
 	x_array = [x_loc]*2500
 	y_array = list(np.linspace(0, opticDiameter, 2500))
-
-	if x_loc == 0:
-		cal1, cal2 = _cal1, _cal2
-	else:
-		cal1, cal2 = calibrateDown()
 
 	print("Setting up oscilloscope to RUN, SEQ, trigger.")
 	tds.makeReady()
@@ -118,12 +115,6 @@ def move_up():
 	v1 = tds.getWaveform(ch="CH1")
 	v2 = tds.getWaveform(ch="CH2")
 
-	print("Using calibration measurements to... calibrate.")
-	dif1 = cal1 - _cal1
-	dif2 = cal2 - _cal2
-	v1 = list(map(lambda f: f - dif1, v1))
-	v2 = list(map(lambda f: f - dif2, v2))
-
 	return x_array, y_array, v1, v2
 
 def move_down():
@@ -131,33 +122,27 @@ def move_down():
 	Moves down the diameter of optic and takes measurement every dx
 	returns x array, y array, v array
 	"""
-	global opticDiameter, x_loc, _cal1, _cal2
+	global opticDiameter, x_loc
 	x_array = [x_loc]*2500
 	y_array = list(np.linspace(0, opticDiameter, 2500))
 
-	if x_loc == 0:
-		cal1, cal2, = _cal1, _cal2
-	else:
-		cal1, cal2 = calibrateHere()
+	# if x_loc == 0:
+	# 	cal1, cal2, = _cal1, _cal2
+	# else:
+	# 	cal1, cal2 = calibrateHere()
 
 	print("Setting up oscilloscope to RUN, SEQ, trigger.")
 	tds.makeReady()
 
 	print("Start downward scan.")
 	tds.trigger()
-	time.sleep(6.3)
+	time.sleep(5.85)
 	zaber.move("ver", command="moveRelative", data=-opticDiameter - 20)
 	
 
 	print("creating v1, v2 lists.")
 	v1 = tds.getWaveform(ch="CH1")
 	v2 = tds.getWaveform(ch="CH2")
-
-	print("Using calibration measurements to... calibrate.")
-	dif1 = cal1 - _cal1
-	dif2 = cal2 - _cal2
-	v1 = list(map(lambda f: f - dif1, v1))
-	v2 = list(map(lambda f: f - dif2, v2))
 
 	# reverse lists so that they are oriented the same way as when moving up.
 	x_array.reverse()
@@ -181,76 +166,12 @@ def getFileNumber():
 	number = name.split("_")[1].split(".")[0]
 	return number + ".txt"
 
-def calibrateHere():
-	"""
-	Moves up and takes a calibration measurement.
-	returns calibration float
-	10 second calibration (not sure how to set the sec/div to anything lower than 1 second)
-	"""
-	global tds
-	tds.setSecDiv("1")
-
-	tds.makeReady()
-	tds.trigger()
-
-	print("getting calibration data.")
-	cal1 = tds.getAvgOfSamples(ch="CH1", samples=2500)
-	cal2 = tds.getAvgOfSamples(ch="CH2", samples=2500)
-	tds.setSecDiv("2")
-	return cal1, cal2
-
-def calibrateUp():
-	"""
-	Moves up and takes a calibration measurement.
-	returns calibration float
-	10 second calibration (not sure how to set the sec/div to anything lower than 1 second)
-	"""
-	global tds, zaber
-	tds.setSecDiv("1")
-	zaber.move("ver", command="moveRelative", data = 20)
-	time.sleep(5)
-
-	tds.makeReady()
-	tds.trigger()
-
-	print("getting calibration data.")
-	cal1 = tds.getAvgOfSamples(ch="CH1", samples=2500)
-	cal2 = tds.getAvgOfSamples(ch="CH2", samples=2500)
-	zaber.move("ver", command="moveRelative", data = -20)
-	time.sleep(5)
-	tds.setSecDiv("2")
-	return cal1, cal2
-
-def calibrateDown():
-	"""
-	Moves down and takes a calibration measurement.
-	returns calibration float
-	10 second calibration (not sure how to set the sec/div to anything lower than 1 second)
-	"""
-	global tds, zaber
-	tds.setSecDiv("1")
-	zaber.move("ver", command="moveRelative", data = -20)
-	time.sleep(5)
-
-	tds.makeReady()
-	tds.trigger()
-
-	print("getting calibration data.")
-	cal1 = tds.getAvgOfSamples(ch="CH1", samples=2500)
-	cal2 = tds.getAvgOfSamples(ch="CH2", samples=2500)
-	zaber.move("ver", command="moveRelative", data = 20)
-	time.sleep(7)
-	tds.setSecDiv("2")
-	return cal1, cal2
 
 start_time = time.time()
 if __name__ == "__main__":
 	traversed = 0
 	pass_number = 1
 	num = getFileNumber()
-	global _cal1, _cal2
-
-	_cal1, _cal2 = calibrateDown()
 
 	while traversed <= opticDiameter:
 		print("")
@@ -285,7 +206,7 @@ if __name__ == "__main__":
 
 		# also write a file which tells the elapsed time
 		with open("data/time_" + num, "w") as f:
-			f.write("Calibrated: " + str(pass_number) + "/" + str(numScans) + " in " + str(time_elapsed) + " seconds.")
+			f.write("Uncalibrated: " + str(pass_number) + "/" + str(numScans) + " in " + str(time_elapsed) + " seconds.")
 
 	# print(x)
 	# print(y)
