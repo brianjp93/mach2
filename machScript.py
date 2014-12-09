@@ -103,7 +103,10 @@ def move_up():
 	x_array = [x_loc]*2500
 	y_array = list(np.linspace(0, opticDiameter, 2500))
 
-	cal1, cal2 = calibrateDown()
+	if x_loc == 0:
+		cal1, cal2 = _cal1, _cal2
+	else:
+		cal1, cal2 = calibrateDown()
 
 	print("Setting up oscilloscope to RUN, SEQ, trigger.")
 	tds.makeReady()
@@ -134,7 +137,10 @@ def move_down():
 	x_array = [x_loc]*2500
 	y_array = list(np.linspace(0, opticDiameter, 2500))
 
-	cal1, cal2 = calibrateHere()
+	if x_loc == 0:
+		cal1, cal2, = _cal1, _cal2
+	else:
+		cal1, cal2 = calibrateHere()
 
 	print("Setting up oscilloscope to RUN, SEQ, trigger.")
 	tds.makeReady()
