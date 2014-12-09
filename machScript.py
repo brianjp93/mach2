@@ -145,7 +145,7 @@ def move_down():
 
 	print("Start downward scan.")
 	tds.trigger()
-	time.sleep(6.3)
+	time.sleep(6.6)
 	zaber.move("ver", command="moveRelative", data=-opticDiameter - 20)
 	
 
