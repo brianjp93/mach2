@@ -74,6 +74,7 @@ def snake(dx, zaber, tds):
 	zaber.move("hor", command="moveRelative", data=dx)
 	# time.sleep(10)
 	x_loc += dx
+	time.sleep(.5)
 
 	# MOVE DOWN
 	#############################################
@@ -103,16 +104,16 @@ def move_up():
 	x_array = [x_loc]*2500
 	y_array = list(np.linspace(0, opticDiameter, 2500))
 
-	if x_loc == 0:
-		cal1, cal2 = _cal1, _cal2
-	else:
-		cal1, cal2 = calibrateDown()
+	# if x_loc == 0:
+	# 	cal1, cal2 = _cal1, _cal2
+	# else:
+	# 	cal1, cal2 = calibrateDown()
 
 	print("Setting up oscilloscope to RUN, SEQ, trigger.")
 	tds.makeReady()
 	print("Start upward scan.")
-	zaber.move("ver", command="moveRelative", data=opticDiameter + 20)
 	tds.trigger()
+	zaber.move("ver", command="moveRelative", data=opticDiameter + 20)
 
 	print("creating v1, v2 lists.")
 	v1 = tds.getWaveform(ch="CH1")
@@ -137,18 +138,19 @@ def move_down():
 	x_array = [x_loc]*2500
 	y_array = list(np.linspace(0, opticDiameter, 2500))
 
-	if x_loc == 0:
-		cal1, cal2, = _cal1, _cal2
-	else:
-		cal1, cal2 = calibrateHere()
+	# if x_loc == 0:
+	# 	cal1, cal2, = _cal1, _cal2
+	# else:
+	# 	cal1, cal2 = calibrateHere()
 
 	print("Setting up oscilloscope to RUN, SEQ, trigger.")
 	tds.makeReady()
 
 	print("Start downward scan.")
-	time.sleep(6.3)
-	zaber.move("ver", command="moveRelative", data=-opticDiameter - 20)
 	tds.trigger()
+	time.sleep(5.82)
+	zaber.move("ver", command="moveRelative", data=-opticDiameter - 20)
+	
 
 	print("creating v1, v2 lists.")
 	v1 = tds.getWaveform(ch="CH1")
@@ -197,10 +199,10 @@ def calibrateHere():
 	tds.trigger()
 
 	print("getting calibration data.")
-	_cal1 = tds.getAvgOfSamples(ch="CH1", samples=2500)
-	_cal2 = tds.getAvgOfSamples(ch="CH2", samples=2500)
+	cal1 = tds.getAvgOfSamples(ch="CH1", samples=2500)
+	cal2 = tds.getAvgOfSamples(ch="CH2", samples=2500)
 	tds.setSecDiv("2")
-	return _cal1, _cal2
+	return cal1, cal2
 
 def calibrateUp():
 	"""
@@ -217,12 +219,12 @@ def calibrateUp():
 	tds.trigger()
 
 	print("getting calibration data.")
-	_cal1 = tds.getAvgOfSamples(ch="CH1", samples=2500)
-	_cal2 = tds.getAvgOfSamples(ch="CH2", samples=2500)
+	cal1 = tds.getAvgOfSamples(ch="CH1", samples=2500)
+	cal2 = tds.getAvgOfSamples(ch="CH2", samples=2500)
 	zaber.move("ver", command="moveRelative", data = -20)
 	time.sleep(5)
 	tds.setSecDiv("2")
-	return _cal1, _cal2
+	return cal1, cal2
 
 def calibrateDown():
 	"""
@@ -239,23 +241,29 @@ def calibrateDown():
 	tds.trigger()
 
 	print("getting calibration data.")
-	_cal1 = tds.getAvgOfSamples(ch="CH1", samples=2500)
-	_cal2 = tds.getAvgOfSamples(ch="CH2", samples=2500)
+	cal1 = tds.getAvgOfSamples(ch="CH1", samples=2500)
+	cal2 = tds.getAvgOfSamples(ch="CH2", samples=2500)
 	zaber.move("ver", command="moveRelative", data = 20)
-	time.sleep(5)
+	time.sleep(7)
 	tds.setSecDiv("2")
-	return _cal1, _cal2
+	return cal1, cal2
 
 start_time = time.time()
 if __name__ == "__main__":
 	traversed = 0
+	pass_number = 1
 	num = getFileNumber()
-	global _cal1, _cal2
+	global _cal1, _cal2, numScans
 
-	_cal1, _cal2 = calibrateDown()
+	# _cal1, _cal2 = calibrateDown()
+	_cal1 = _cal2 = 0
 
 	while traversed <= opticDiameter:
+		print("")
 		print("Beginning snake function")
+		print("pass number " + str(pass_number) + " of " + str(numScans))
+		print(str(time.time() - start_time) + " seconds elapsed so far.")
+		pass_number += 2
 		temp_x, temp_y, temp_v1, temp_v2 = snake(dx, zaber, tds)
 		traversed += 2 * dx
 		print("snake finished.")
