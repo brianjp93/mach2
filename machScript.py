@@ -103,11 +103,7 @@ def move_up():
 	x_array = [x_loc]*2500
 	y_array = list(np.linspace(0, opticDiameter, 2500))
 
-	if x_loc == 0:
-		pass
-	else:
-		print("Getting calibration measurements.")
-		cal1, cal2 = calibrateDown()
+	cal1, cal2 = calibrateDown()
 
 	print("Setting up oscilloscope to RUN, SEQ, trigger.")
 	tds.makeReady()
@@ -138,11 +134,7 @@ def move_down():
 	x_array = [x_loc]*2500
 	y_array = list(np.linspace(0, opticDiameter, 2500))
 
-	if x_loc == 0:
-		pass
-	else:
-		print("Getting calibration measurements.")
-		cal1, cal2 = calibrateHere()
+	cal1, cal2 = calibrateHere()
 
 	print("Setting up oscilloscope to RUN, SEQ, trigger.")
 	tds.makeReady()
@@ -198,6 +190,7 @@ def calibrateHere():
 	tds.makeReady()
 	tds.trigger()
 
+	print("getting calibration data.")
 	_cal1 = tds.getAvgOfSamples(ch="CH1", samples=2500)
 	_cal2 = tds.getAvgOfSamples(ch="CH2", samples=2500)
 	tds.setSecDiv("2")
@@ -217,6 +210,7 @@ def calibrateUp():
 	tds.makeReady()
 	tds.trigger()
 
+	print("getting calibration data.")
 	_cal1 = tds.getAvgOfSamples(ch="CH1", samples=2500)
 	_cal2 = tds.getAvgOfSamples(ch="CH2", samples=2500)
 	zaber.move("ver", command="moveRelative", data = -20)
@@ -238,6 +232,7 @@ def calibrateDown():
 	tds.makeReady()
 	tds.trigger()
 
+	print("getting calibration data.")
 	_cal1 = tds.getAvgOfSamples(ch="CH1", samples=2500)
 	_cal2 = tds.getAvgOfSamples(ch="CH2", samples=2500)
 	zaber.move("ver", command="moveRelative", data = 20)
@@ -245,6 +240,7 @@ def calibrateDown():
 	tds.setSecDiv("2")
 	return _cal1, _cal2
 
+start_time = time.time()
 if __name__ == "__main__":
 	traversed = 0
 	num = getFileNumber()
@@ -277,7 +273,11 @@ if __name__ == "__main__":
 			f.write(" ".join(list(map(str, temp_v1[0]))) + "\n" + " ".join(list(map(str, temp_v1[1]))) + "\n")
 		with open("data/v2_" + num, "a") as f:
 			f.write(" ".join(list(map(str, temp_v2[0]))) + "\n" + " ".join(list(map(str, temp_v2[1]))) + "\n")
-		
+time_elapsed = time.time() - start_time
+
+# also write a file which tells the elapsed time
+with open("data/time_" + num, "a") as f:
+	f.write(str(time_elapsed))		
 
 	# print(x)
 	# print(y)
@@ -292,7 +292,3 @@ if __name__ == "__main__":
 	
 	# got rid of end plotting script.
 	#     Just use the conFromFiles.py file.
-
-	# This last line is here just so the oscilloscope resets to take 2500 samples
-	waveform = tds.get_waveform(source="CH1", start=1, stop=2500)
-	waveform = tds.get_waveform(source="CH2", start=1, stop=2500)
