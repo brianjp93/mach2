@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 
-num = input("What file number would you like to plot?  (integer): ")
+num = raw_input("What file number would you like to plot?  (integer): ")
 num = "_" + str(num) + ".txt"
 print("Attempting to read data/x" + num)
 print("Attempting to read data/y" + num)
