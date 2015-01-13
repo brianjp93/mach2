@@ -25,7 +25,7 @@ dx = float(opticDiameter) / float(numScans)  # mm distance to move horizontally 
 print("Will move " + str(dx) + "mm each transition.")
 
 print("zaber = Zaber stage object")
-zaber = Zaber(zaberStagePort=2)
+zaber = Zaber(zaberStagePort=3)
 print("tds = Tds oscilloscope object")
 tds = Tds(oscPort="COM1")
 print("Setting seconds/div to 2.5")
@@ -136,7 +136,7 @@ def move_down():
 
 	print("Start downward scan.")
 	tds.trigger()
-	time.sleep(5.85)
+	time.sleep(7.25)
 	zaber.move("ver", command="moveRelative", data=-opticDiameter - 20)
 	
 

@@ -65,7 +65,7 @@ class Tds():
 			ch		- which channel you want to take the measurement from.  Defaults to CH1
 			samples - Number of samples you would like to average
 		"""
-		self.isSave()
+		self.isReady()
 		counter = 1
 		while True:
 			try:		
@@ -84,7 +84,7 @@ class Tds():
 		"""
 		return list of floats  -  waveform value list
 		"""
-		self.isSave()
+		self.isReady()
 		counter = 1
 		while True:
 			try:		
@@ -146,6 +146,7 @@ class Tds():
 		"""
 		while self.osc.trigger_state() != "save":
 			time.sleep(.1)
+			print(self.osc.trigger_state())
 		return True
 
 	def isReady(self):
